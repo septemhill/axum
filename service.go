@@ -14,6 +14,14 @@ func (h ServiceFunc) Handle(r *http.Request) ResponsePacker {
 
 type Arg1[T1 RequestExtractor] func(*T1) ResponsePacker
 
+type Arg2[T1, T2 RequestExtractor] func(*T1, *T2) ResponsePacker
+
+type Arg3[T1, T2, T3 RequestExtractor] func(*T1, *T2, *T3) ResponsePacker
+
+type Arg4[T1, T2, T3, T4 RequestExtractor] func(*T1, *T2, *T3, *T4) ResponsePacker
+
+type Arg5[T1, T2, T3, T4, T5 RequestExtractor] func(*T1, *T2, *T3, *T4, *T5) ResponsePacker
+
 func (a Arg1[T1]) Handle(req *http.Request) ResponsePacker {
 	var ext T1
 	t, err := ext.Extract(req)
@@ -25,8 +33,6 @@ func (a Arg1[T1]) Handle(req *http.Request) ResponsePacker {
 	s := (t.(T1))
 	return a(&s)
 }
-
-type Arg2[T1, T2 RequestExtractor] func(*T1, *T2) ResponsePacker
 
 func (a Arg2[T1, T2]) Handle(req *http.Request) ResponsePacker {
 	var ext1 T1
@@ -46,8 +52,6 @@ func (a Arg2[T1, T2]) Handle(req *http.Request) ResponsePacker {
 
 	return a(&s1, &s2)
 }
-
-type Arg3[T1, T2, T3 RequestExtractor] func(*T1, *T2, *T3) ResponsePacker
 
 func (a Arg3[T1, T2, T3]) Handle(req *http.Request) ResponsePacker {
 	var ext1 T1
@@ -73,8 +77,6 @@ func (a Arg3[T1, T2, T3]) Handle(req *http.Request) ResponsePacker {
 
 	return a(&s1, &s2, &s3)
 }
-
-type Arg4[T1, T2, T3, T4 RequestExtractor] func(*T1, *T2, *T3, *T4) ResponsePacker
 
 func (a Arg4[T1, T2, T3, T4]) Handle(req *http.Request) ResponsePacker {
 	var ext1 T1
@@ -107,8 +109,6 @@ func (a Arg4[T1, T2, T3, T4]) Handle(req *http.Request) ResponsePacker {
 
 	return a(&s1, &s2, &s3, &s4)
 }
-
-type Arg5[T1, T2, T3, T4, T5 RequestExtractor] func(*T1, *T2, *T3, *T4, *T5) ResponsePacker
 
 func (a Arg5[T1, T2, T3, T4, T5]) Handle(req *http.Request) ResponsePacker {
 	var ext1 T1
@@ -147,6 +147,26 @@ func (a Arg5[T1, T2, T3, T4, T5]) Handle(req *http.Request) ResponsePacker {
 	s5 := (t5.(T5))
 
 	return a(&s1, &s2, &s3, &s4, &s5)
+}
+
+func (a Arg1[T1]) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	_ = a.Handle(r)
+}
+
+func (a Arg2[T1, T2]) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	_ = a.Handle(r)
+}
+
+func (a Arg3[T1, T2, T3]) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	_ = a.Handle(r)
+}
+
+func (a Arg4[T1, T2, T3, T4]) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	_ = a.Handle(r)
+}
+
+func (a Arg5[T1, T2, T3, T4, T5]) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	_ = a.Handle(r)
 }
 
 func Arg1Func[
